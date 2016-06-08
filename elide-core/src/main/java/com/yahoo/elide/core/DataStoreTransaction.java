@@ -13,6 +13,7 @@ import com.yahoo.elide.security.User;
 import java.io.Closeable;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -164,11 +165,14 @@ public interface DataStoreTransaction extends Closeable {
             String relationName,
             Class<T> relationClass,
             EntityDictionary dictionary,
-            Set<Predicate> filters
+            FilterScope filterScope
     ) {
         Object val = PersistentResource.getValue(entity, relationName, dictionary);
         if (val instanceof Collection) {
             Collection filteredVal = (Collection) val;
+
+            final String valType = dictionary.getJsonAliasFor(relationClass);
+            Set<Predicate> filters = new HashSet<>(filterScope.getRequestScope().getPredicatesOfType(valType));
 
             if (!filters.isEmpty()) {
                 filteredVal = filterCollection(filteredVal, relationClass, filters);
@@ -185,14 +189,18 @@ public interface DataStoreTransaction extends Closeable {
             String relationName,
             Class<T> relationClass,
             EntityDictionary dictionary,
-            Set<Predicate> filters,
-            Sorting sorting,
-            Pagination pagination
+            FilterScope filterScope
     ) {
         Object val = PersistentResource.getValue(entity, relationName, dictionary);
         if (val instanceof Collection) {
             Collection filteredVal = (Collection) val;
+
+            final String valType = dictionary.getJsonAliasFor(relationClass);
+            Set<Predicate> filters = new HashSet<>(filterScope.getRequestScope().getPredicatesOfType(valType));
+
             // sorting/pagination supported on last entity only eg /v1/author/1/books? books would be valid
+            Sorting sorting = filterScope.getRequestScope().getSorting();
+            Pagination pagination = filterScope.getRequestScope().getPagination();
             final boolean hasSortRules = sorting.isDefaultInstance();
             final boolean isPaginated = pagination.isDefaultInstance();
 

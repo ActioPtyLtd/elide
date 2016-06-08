@@ -890,9 +890,10 @@ public class PersistentResource<T> implements com.yahoo.elide.security.Persisten
      */
     private Set<PersistentResource> getRelationUnchecked(String relationName, Set<Predicate> filters) {
         RelationshipType type = getRelationshipType(relationName);
-        final Class<?> entityClass = dictionary.getParameterizedType(obj, relationName);
+        final Class<?> relationClass = dictionary.getParameterizedType(obj, relationName);
         Object val = requestScope.getTransaction()
-                .getRelation(obj, type, relationName, entityClass, dictionary, filters);
+                .getRelation(obj, type, relationName, relationClass,
+                        dictionary, new FilterScope(requestScope, obj.getClass()));
 
         if (val == null) {
             return Collections.emptySet();
@@ -920,10 +921,10 @@ public class PersistentResource<T> implements com.yahoo.elide.security.Persisten
     private Set<PersistentResource> getRelationUncheckedWithSortingAndPagination(String relationName,
                                                                                  Set<Predicate> filters) {
         RelationshipType type = getRelationshipType(relationName);
-        final Class<?> entityClass = dictionary.getParameterizedType(obj, relationName);
+        final Class<?> relationClass = dictionary.getParameterizedType(obj, relationName);
         Object val = requestScope.getTransaction()
-                .getRelationWithSortingAndPagination(obj, type, relationName, entityClass, dictionary, filters,
-                        requestScope.getSorting(), requestScope.getPagination());
+                .getRelationWithSortingAndPagination(obj, type, relationName, relationClass,
+                        dictionary, new FilterScope(requestScope, obj.getClass()));
         if (val == null) {
             return Collections.emptySet();
         }
