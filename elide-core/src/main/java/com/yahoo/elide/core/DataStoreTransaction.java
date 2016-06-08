@@ -13,7 +13,6 @@ import com.yahoo.elide.security.User;
 import java.io.Closeable;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -117,10 +116,39 @@ public interface DataStoreTransaction extends Closeable {
      *
      * @param <T>         the type parameter
      * @param entityClass the entity class
+     * @param filters set of predicates
+     * @return records iterable
+     */
+    default <T> Iterable<T> loadObjects(Class<T> entityClass, Set<Predicate> filters) {
+        // default to ignoring criteria
+        return loadObjects(entityClass);
+    }
+
+    /**
+     * Read entity records from database table with applied criteria.
+     *
+     * @param <T>         the type parameter
+     * @param entityClass the entity class
      * @param filterScope scope for filter processing
      * @return records iterable
      */
     default <T> Iterable<T> loadObjectsWithSortingAndPagination(Class<T> entityClass, FilterScope filterScope) {
+        // default to ignoring criteria
+        return loadObjects(entityClass);
+    }
+
+    /**
+     * Read entity records from database table with applied criteria.
+     *
+     * @param <T>         the type parameter
+     * @param entityClass the entity class
+     * @param filters set of predicates
+     * @param sorting sorting
+     * @param pagination pagination
+     * @return records iterable
+     */
+    default <T> Iterable<T> loadObjectsWithSortingAndPagination(
+            Class<T> entityClass, Set<Predicate> filters, Sorting sorting, Pagination pagination) {
         // default to ignoring criteria
         return loadObjects(entityClass);
     }
@@ -165,14 +193,11 @@ public interface DataStoreTransaction extends Closeable {
             String relationName,
             Class<T> relationClass,
             EntityDictionary dictionary,
-            FilterScope filterScope
+            Set<Predicate> filters
     ) {
         Object val = PersistentResource.getValue(entity, relationName, dictionary);
         if (val instanceof Collection) {
             Collection filteredVal = (Collection) val;
-
-            final String valType = dictionary.getJsonAliasFor(relationClass);
-            Set<Predicate> filters = new HashSet<>(filterScope.getRequestScope().getPredicatesOfType(valType));
 
             if (!filters.isEmpty()) {
                 filteredVal = filterCollection(filteredVal, relationClass, filters);
@@ -189,18 +214,14 @@ public interface DataStoreTransaction extends Closeable {
             String relationName,
             Class<T> relationClass,
             EntityDictionary dictionary,
-            FilterScope filterScope
+            Set<Predicate> filters,
+            Sorting sorting,
+            Pagination pagination
     ) {
         Object val = PersistentResource.getValue(entity, relationName, dictionary);
         if (val instanceof Collection) {
             Collection filteredVal = (Collection) val;
-
-            final String valType = dictionary.getJsonAliasFor(relationClass);
-            Set<Predicate> filters = new HashSet<>(filterScope.getRequestScope().getPredicatesOfType(valType));
-
             // sorting/pagination supported on last entity only eg /v1/author/1/books? books would be valid
-            Sorting sorting = filterScope.getRequestScope().getSorting();
-            Pagination pagination = filterScope.getRequestScope().getPagination();
             final boolean hasSortRules = sorting.isDefaultInstance();
             final boolean isPaginated = pagination.isDefaultInstance();
 

@@ -892,8 +892,7 @@ public class PersistentResource<T> implements com.yahoo.elide.security.Persisten
         RelationshipType type = getRelationshipType(relationName);
         final Class<?> relationClass = dictionary.getParameterizedType(obj, relationName);
         Object val = requestScope.getTransaction()
-                .getRelation(obj, type, relationName, relationClass,
-                        dictionary, new FilterScope(requestScope, obj.getClass()));
+                .getRelation(obj, type, relationName, relationClass, dictionary, filters);
 
         if (val == null) {
             return Collections.emptySet();
@@ -923,8 +922,8 @@ public class PersistentResource<T> implements com.yahoo.elide.security.Persisten
         RelationshipType type = getRelationshipType(relationName);
         final Class<?> relationClass = dictionary.getParameterizedType(obj, relationName);
         Object val = requestScope.getTransaction()
-                .getRelationWithSortingAndPagination(obj, type, relationName, relationClass,
-                        dictionary, new FilterScope(requestScope, obj.getClass()));
+                .getRelationWithSortingAndPagination(obj, type, relationName, relationClass, dictionary,
+                        filters, requestScope.getSorting(), requestScope.getPagination());
         if (val == null) {
             return Collections.emptySet();
         }

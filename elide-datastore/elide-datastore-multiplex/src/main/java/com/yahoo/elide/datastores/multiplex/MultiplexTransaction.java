@@ -12,6 +12,8 @@ import com.yahoo.elide.core.FilterScope;
 import com.yahoo.elide.core.RelationshipType;
 import com.yahoo.elide.core.exceptions.InvalidCollectionException;
 import com.yahoo.elide.core.filter.Predicate;
+import com.yahoo.elide.core.pagination.Pagination;
+import com.yahoo.elide.core.sort.Sorting;
 import com.yahoo.elide.security.User;
 
 import java.io.IOException;
@@ -144,10 +146,10 @@ public abstract class MultiplexTransaction implements DataStoreTransaction {
             String relationName,
             Class<T> relationClass,
             EntityDictionary dictionary,
-            FilterScope filterScope
+            Set<Predicate> filters
     ) {
         DataStoreTransaction transaction = getTransaction(entity.getClass());
-        return transaction.getRelation(entity, relationshipType, relationName, relationClass, dictionary, filterScope);
+        return transaction.getRelation(entity, relationshipType, relationName, relationClass, dictionary, filters);
     }
 
     @Override
@@ -157,10 +159,12 @@ public abstract class MultiplexTransaction implements DataStoreTransaction {
             String relationName,
             Class<T> relationClass,
             EntityDictionary dictionary,
-            FilterScope filterScope
+            Set<Predicate> filters,
+            Sorting sorting,
+            Pagination pagination
     ) {
         DataStoreTransaction transaction = getTransaction(entity.getClass());
         return transaction.getRelationWithSortingAndPagination(entity, relationshipType, relationName,
-                relationClass, dictionary, filterScope);
+                relationClass, dictionary, filters, sorting, pagination);
     }
 }
