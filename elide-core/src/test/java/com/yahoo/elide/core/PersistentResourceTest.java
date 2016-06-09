@@ -44,7 +44,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import org.mockito.Answers;
-import org.mockito.Matchers;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -1259,7 +1258,7 @@ public class PersistentResourceTest extends PersistentResource {
         DataStoreTransaction tx = mock(DataStoreTransaction.class, Answers.CALLS_REAL_METHODS);
         User goodUser = new User(1);
 
-        when(tx.loadObjects(eq(Child.class), Matchers.any(FilterScope.class)))
+        when(tx.loadObjects(eq(Child.class), any(FilterScope.class)))
                 .thenReturn(Lists.newArrayList(child1, child2, child3, child4, child5));
 
         RequestScope goodScope = new RequestScope(null, tx, goodUser, dictionary, null, MOCK_AUDIT_LOGGER);
