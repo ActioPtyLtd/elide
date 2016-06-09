@@ -42,7 +42,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.text.WordUtils;
 
 import lombok.NonNull;
-import lombok.ToString;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
@@ -74,7 +73,6 @@ import javax.persistence.GeneratedValue;
  *
  * @param <T> type of resource
  */
-@ToString
 public class PersistentResource<T> implements com.yahoo.elide.security.PersistentResource<T> {
     private final String type;
     protected T obj;
