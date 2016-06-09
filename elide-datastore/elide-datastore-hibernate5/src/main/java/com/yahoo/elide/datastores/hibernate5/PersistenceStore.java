@@ -5,10 +5,11 @@
  */
 package com.yahoo.elide.datastores.hibernate5;
 
-import com.google.common.base.Preconditions;
 import com.yahoo.elide.core.DataStore;
 import com.yahoo.elide.core.DataStoreTransaction;
 import com.yahoo.elide.core.EntityDictionary;
+
+import com.google.common.base.Preconditions;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.metamodel.EntityType;
@@ -34,5 +35,10 @@ public class PersistenceStore implements DataStore {
     @Override
     public DataStoreTransaction beginTransaction() {
         return new PersistenceTransaction(entityManagerFactory.createEntityManager());
+    }
+
+    @Override
+    public DataStoreTransaction beginTransaction(DataStoreTransaction parent) {
+        return new PersistenceTransaction(entityManagerFactory.createEntityManager(), parent);
     }
 }

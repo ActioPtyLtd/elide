@@ -5,11 +5,13 @@
  */
 package com.yahoo.elide.datastores.hibernate3;
 
-import com.google.common.base.Preconditions;
 import com.yahoo.elide.core.DataStore;
 import com.yahoo.elide.core.DataStoreTransaction;
 import com.yahoo.elide.core.EntityDictionary;
 import com.yahoo.elide.core.exceptions.TransactionException;
+
+import com.google.common.base.Preconditions;
+
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollMode;
@@ -118,11 +120,28 @@ public class HibernateStore implements DataStore {
     }
 
     @Override
+    public DataStoreTransaction beginTransaction(DataStoreTransaction parent) {
+        Session session = sessionFactory.getCurrentSession();
+        Preconditions.checkNotNull(session);
+        session.beginTransaction();
+        return new HibernateTransaction(session, parent);
+    }
+
+    @Override
     public DataStoreTransaction beginReadTransaction() {
         Session session = sessionFactory.getCurrentSession();
         Preconditions.checkNotNull(session);
         session.beginTransaction();
         session.setDefaultReadOnly(true);
         return new HibernateTransaction(session, isScrollEnabled, scrollMode);
+    }
+
+    @Override
+    public DataStoreTransaction beginReadTransaction(DataStoreTransaction parent) {
+        Session session = sessionFactory.getCurrentSession();
+        Preconditions.checkNotNull(session);
+        session.beginTransaction();
+        session.setDefaultReadOnly(true);
+        return new HibernateTransaction(session, isScrollEnabled, scrollMode, parent);
     }
 }

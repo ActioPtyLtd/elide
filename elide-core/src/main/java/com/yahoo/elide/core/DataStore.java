@@ -24,6 +24,10 @@ public interface DataStore {
      */
     DataStoreTransaction beginTransaction();
 
+    default DataStoreTransaction beginTransaction(DataStoreTransaction parent) {
+        return beginTransaction();
+    }
+
     /**
      * Begin read-only transaction.  Default to regular transaction.
      *
@@ -31,5 +35,9 @@ public interface DataStore {
      */
     default DataStoreTransaction beginReadTransaction() {
         return beginTransaction();
+    }
+
+    default DataStoreTransaction beginReadTransaction(DataStoreTransaction parent) {
+        return beginReadTransaction();
     }
 }

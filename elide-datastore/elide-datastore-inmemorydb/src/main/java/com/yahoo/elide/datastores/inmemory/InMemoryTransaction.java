@@ -9,7 +9,6 @@ import com.yahoo.elide.core.DataStoreTransaction;
 import com.yahoo.elide.core.EntityDictionary;
 import com.yahoo.elide.utils.coerce.CoerceUtil;
 
-import javax.persistence.Id;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -18,6 +17,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+
+import javax.persistence.Id;
 
 /**
  * InMemoryDataStore transaction handler.
@@ -28,12 +29,22 @@ public class InMemoryTransaction implements DataStoreTransaction {
     private final ConcurrentHashMap<Class<?>, ConcurrentHashMap<String, Object>> dataStore;
     private final List<Operation> operations;
     private final EntityDictionary dictionary;
+    private final DataStoreTransaction parent;
 
     public InMemoryTransaction(ConcurrentHashMap<Class<?>, ConcurrentHashMap<String, Object>> dataStore,
                                EntityDictionary dictionary) {
         this.dataStore = dataStore;
         this.dictionary = dictionary;
         this.operations = new ArrayList<>();
+        this.parent = null;
+    }
+
+    public InMemoryTransaction(ConcurrentHashMap<Class<?>, ConcurrentHashMap<String, Object>> dataStore,
+                               EntityDictionary dictionary, DataStoreTransaction parent) {
+        this.dataStore = dataStore;
+        this.dictionary = dictionary;
+        this.operations = new ArrayList<>();
+        this.parent = parent;
     }
 
     @Override

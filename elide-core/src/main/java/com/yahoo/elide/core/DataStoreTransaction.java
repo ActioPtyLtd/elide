@@ -22,6 +22,15 @@ import java.util.Set;
 public interface DataStoreTransaction extends Closeable {
 
     /**
+     * Get the parent transaction(a MultiplexTransaction) if applicable
+     *
+     * @return the parent MultiplexTransaction, or null if not applicable
+     */
+    default DataStoreTransaction getParent() {
+        return null;
+    }
+
+    /**
      * Wrap the opaque user.
      *
      * @param opaqueUser the opaque user
