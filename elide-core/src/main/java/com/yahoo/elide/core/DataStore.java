@@ -38,6 +38,6 @@ public interface DataStore {
     }
 
     default DataStoreTransaction beginReadTransaction(DataStoreTransaction parent) {
-        return beginReadTransaction();
+        return beginTransaction(parent);
     }
 }
