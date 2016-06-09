@@ -125,39 +125,10 @@ public interface DataStoreTransaction extends Closeable {
      *
      * @param <T>         the type parameter
      * @param entityClass the entity class
-     * @param filters set of predicates
-     * @return records iterable
-     */
-    default <T> Iterable<T> loadObjects(Class<T> entityClass, Set<Predicate> filters) {
-        // default to ignoring criteria
-        return loadObjects(entityClass);
-    }
-
-    /**
-     * Read entity records from database table with applied criteria.
-     *
-     * @param <T>         the type parameter
-     * @param entityClass the entity class
      * @param filterScope scope for filter processing
      * @return records iterable
      */
     default <T> Iterable<T> loadObjectsWithSortingAndPagination(Class<T> entityClass, FilterScope filterScope) {
-        // default to ignoring criteria
-        return loadObjects(entityClass);
-    }
-
-    /**
-     * Read entity records from database table with applied criteria.
-     *
-     * @param <T>         the type parameter
-     * @param entityClass the entity class
-     * @param filters set of predicates
-     * @param sorting sorting
-     * @param pagination pagination
-     * @return records iterable
-     */
-    default <T> Iterable<T> loadObjectsWithSortingAndPagination(
-            Class<T> entityClass, Set<Predicate> filters, Sorting sorting, Pagination pagination) {
         // default to ignoring criteria
         return loadObjects(entityClass);
     }
