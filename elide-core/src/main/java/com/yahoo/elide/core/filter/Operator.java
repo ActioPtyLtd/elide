@@ -28,7 +28,7 @@ public enum Operator implements BiFunction<Predicate, EntityDictionary, java.uti
             return (entity) -> {
                 Object val = PersistentResource.getValue(entity, field, dictionary);
                 List<Object> coercedValues = values.stream()
-                        .map(v -> CoerceUtil.coerce(v, entity.getClass())).collect(Collectors.toList());
+                        .map(v -> CoerceUtil.coerce(v, val.getClass())).collect(Collectors.toList());
                 return coercedValues.contains(val);
             };
         }
@@ -39,7 +39,7 @@ public enum Operator implements BiFunction<Predicate, EntityDictionary, java.uti
             return (entity) -> {
                 Object val = PersistentResource.getValue(entity, field, dictionary);
                 List<Object> coercedValues = values.stream()
-                        .map(v -> CoerceUtil.coerce(v, entity.getClass())).collect(Collectors.toList());
+                        .map(v -> CoerceUtil.coerce(v, val.getClass())).collect(Collectors.toList());
                 return !coercedValues.contains(val);
             };
         }
