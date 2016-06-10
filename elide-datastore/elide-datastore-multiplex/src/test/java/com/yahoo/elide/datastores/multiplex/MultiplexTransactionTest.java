@@ -5,7 +5,6 @@
  */
 package com.yahoo.elide.datastores.multiplex;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,8 +25,8 @@ public class MultiplexTransactionTest {
         DataStoreTransaction tx1 = mock(DataStoreTransaction.class);
         DataStoreTransaction tx2 = mock(DataStoreTransaction.class);
 
-        when(store1.beginReadTransaction(any())).thenReturn(tx1);
-        when(store2.beginReadTransaction(any())).thenReturn(tx2);
+        when(store1.beginReadTransaction()).thenReturn(tx1);
+        when(store2.beginReadTransaction()).thenReturn(tx2);
 
         MultiplexManager store = new MultiplexManager(store1, store2);
 
