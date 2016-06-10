@@ -18,18 +18,10 @@ import javax.persistence.EntityManager;
  */
 public class PersistenceTransaction implements DataStoreTransaction {
     private final EntityManager entityManager;
-    private final DataStoreTransaction parent;
 
     public PersistenceTransaction(EntityManager entityManager) {
         this.entityManager = entityManager;
         this.entityManager.getTransaction().begin();
-        this.parent = null;
-    }
-
-    public PersistenceTransaction(EntityManager entityManager, DataStoreTransaction parent) {
-        this.entityManager = entityManager;
-        this.entityManager.getTransaction().begin();
-        this.parent = parent;
     }
 
     @Override
@@ -89,10 +81,5 @@ public class PersistenceTransaction implements DataStoreTransaction {
     @Override
     public User accessUser(Object opaqueUser) {
         return new User(opaqueUser);
-    }
-
-    @Override
-    public DataStoreTransaction getParent() {
-        return parent;
     }
 }

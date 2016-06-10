@@ -53,8 +53,6 @@ public class HibernateTransaction implements DataStoreTransaction {
     private final boolean isScrollEnabled;
     private final ScrollMode scrollMode;
 
-    private final DataStoreTransaction parent;
-
     /**
      * Instantiates a new Hibernate transaction.
      *
@@ -66,21 +64,6 @@ public class HibernateTransaction implements DataStoreTransaction {
         this.session = session;
         this.isScrollEnabled = true;
         this.scrollMode = ScrollMode.FORWARD_ONLY;
-        this.parent = null;
-    }
-
-    /**
-     * Instantiates a new Hibernate transaction.
-     *
-     * @param session the session
-     * @deprecated since Elide 2.3.2. Will be removed no later than the release of Elide 3.0.
-     */
-    @Deprecated
-    public HibernateTransaction(Session session, DataStoreTransaction parent) {
-        this.session = session;
-        this.isScrollEnabled = true;
-        this.scrollMode = ScrollMode.FORWARD_ONLY;
-        this.parent = parent;
     }
 
     /**
@@ -94,22 +77,6 @@ public class HibernateTransaction implements DataStoreTransaction {
         this.session = session;
         this.isScrollEnabled = isScrollEnabled;
         this.scrollMode = scrollMode;
-        this.parent = null;
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param session Hibernate session
-     * @param isScrollEnabled Whether or not scrolling is enabled
-     * @param scrollMode Scroll mode to use if scrolling enabled
-     */
-    protected HibernateTransaction(
-            Session session, boolean isScrollEnabled, ScrollMode scrollMode, DataStoreTransaction parent) {
-        this.session = session;
-        this.isScrollEnabled = isScrollEnabled;
-        this.scrollMode = scrollMode;
-        this.parent = parent;
     }
 
     @Override
@@ -297,10 +264,5 @@ public class HibernateTransaction implements DataStoreTransaction {
     @Override
     public User accessUser(Object opaqueUser) {
         return new User(opaqueUser);
-    }
-
-    @Override
-    public DataStoreTransaction getParent() {
-        return parent;
     }
 }

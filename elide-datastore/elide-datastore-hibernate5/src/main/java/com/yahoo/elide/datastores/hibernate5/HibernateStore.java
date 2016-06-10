@@ -115,12 +115,4 @@ public class HibernateStore implements DataStore {
         session.beginTransaction();
         return new HibernateTransaction(session, isScrollEnabled, scrollMode);
     }
-
-    @Override
-    public DataStoreTransaction beginTransaction(DataStoreTransaction parent) {
-        Session session = sessionFactory.getCurrentSession();
-        Preconditions.checkNotNull(session);
-        session.beginTransaction();
-        return new HibernateTransaction(session, isScrollEnabled, scrollMode, parent);
-    }
 }

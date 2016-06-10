@@ -57,4 +57,9 @@
             <class name="com.yahoo.elide.core.filter.PredicateTest" />
         </classes>
     </test> <!-- Test -->
+    <test name="com.yahoo.elide.core.filter.OperatorTest">
+        <classes>
+            <class name="com.yahoo.elide.core.filter.OperatorTest" />
+        </classes>
+    </test> <!-- Test -->
 </suite> <!-- Suite -->

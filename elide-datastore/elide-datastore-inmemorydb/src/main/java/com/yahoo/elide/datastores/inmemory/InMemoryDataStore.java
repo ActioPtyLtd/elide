@@ -53,11 +53,6 @@ public class InMemoryDataStore implements DataStore {
     }
 
     @Override
-    public DataStoreTransaction beginTransaction(DataStoreTransaction parent) {
-        return new InMemoryTransaction(dataStore, dictionary, parent);
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Data store contents ");

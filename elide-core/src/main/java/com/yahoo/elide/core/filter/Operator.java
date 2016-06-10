@@ -116,8 +116,9 @@ public enum Operator implements BiFunction<Predicate, EntityDictionary, java.uti
                 }
 
                 Object val = PersistentResource.getValue(entity, field, dictionary);
+                Comparable filterComp = (Comparable) CoerceUtil
+                        .coerce(CoerceUtil.coerce(values.get(0), val.getClass()), Comparable.class);
                 Comparable valComp = (Comparable) CoerceUtil.coerce(val, Comparable.class);
-                Comparable filterComp = (Comparable) CoerceUtil.coerce(values.get(0), Comparable.class);
                 return valComp.compareTo(filterComp) < 0;
             };
         }
@@ -131,8 +132,9 @@ public enum Operator implements BiFunction<Predicate, EntityDictionary, java.uti
                 }
 
                 Object val = PersistentResource.getValue(entity, field, dictionary);
+                Comparable filterComp = (Comparable) CoerceUtil
+                        .coerce(CoerceUtil.coerce(values.get(0), val.getClass()), Comparable.class);
                 Comparable valComp = (Comparable) CoerceUtil.coerce(val, Comparable.class);
-                Comparable filterComp = (Comparable) CoerceUtil.coerce(values.get(0), Comparable.class);
                 return valComp.compareTo(filterComp) <= 0;
             };
         }
@@ -146,8 +148,9 @@ public enum Operator implements BiFunction<Predicate, EntityDictionary, java.uti
                 }
 
                 Object val = PersistentResource.getValue(entity, field, dictionary);
+                Comparable filterComp = (Comparable) CoerceUtil
+                        .coerce(CoerceUtil.coerce(values.get(0), val.getClass()), Comparable.class);
                 Comparable valComp = (Comparable) CoerceUtil.coerce(val, Comparable.class);
-                Comparable filterComp = (Comparable) CoerceUtil.coerce(values.get(0), Comparable.class);
                 return valComp.compareTo(filterComp) > 0;
             };
         }
@@ -161,8 +164,9 @@ public enum Operator implements BiFunction<Predicate, EntityDictionary, java.uti
                 }
 
                 Object val = PersistentResource.getValue(entity, field, dictionary);
+                Comparable filterComp = (Comparable) CoerceUtil
+                        .coerce(CoerceUtil.coerce(values.get(0), val.getClass()), Comparable.class);
                 Comparable valComp = (Comparable) CoerceUtil.coerce(val, Comparable.class);
-                Comparable filterComp = (Comparable) CoerceUtil.coerce(values.get(0), Comparable.class);
                 return valComp.compareTo(filterComp) >= 0;
             };
         }

@@ -20,7 +20,7 @@ public class MultiplexReadTransaction extends MultiplexTransaction {
     @Override
     protected DataStoreTransaction beginTransaction(DataStore dataStore) {
         // begin read transaction
-        return dataStore.beginReadTransaction(this);
+        return dataStore.beginReadTransaction();
     }
 
     @Override

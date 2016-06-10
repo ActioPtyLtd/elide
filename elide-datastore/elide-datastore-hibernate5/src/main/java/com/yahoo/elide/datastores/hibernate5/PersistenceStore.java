@@ -36,9 +36,4 @@ public class PersistenceStore implements DataStore {
     public DataStoreTransaction beginTransaction() {
         return new PersistenceTransaction(entityManagerFactory.createEntityManager());
     }
-
-    @Override
-    public DataStoreTransaction beginTransaction(DataStoreTransaction parent) {
-        return new PersistenceTransaction(entityManagerFactory.createEntityManager(), parent);
-    }
 }

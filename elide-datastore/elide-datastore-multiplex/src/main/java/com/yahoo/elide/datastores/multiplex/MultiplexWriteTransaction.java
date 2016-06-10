@@ -44,7 +44,7 @@ public class MultiplexWriteTransaction extends MultiplexTransaction {
     @Override
     protected DataStoreTransaction beginTransaction(DataStore dataStore) {
         // begin updating transaction
-        return dataStore.beginTransaction(this);
+        return dataStore.beginTransaction();
     }
 
     @Override

@@ -37,22 +37,12 @@ public class InMemoryTransaction implements DataStoreTransaction {
     private final ConcurrentHashMap<Class<?>, ConcurrentHashMap<String, Object>> dataStore;
     private final List<Operation> operations;
     private final EntityDictionary dictionary;
-    private final DataStoreTransaction parent;
 
     public InMemoryTransaction(ConcurrentHashMap<Class<?>, ConcurrentHashMap<String, Object>> dataStore,
                                EntityDictionary dictionary) {
         this.dataStore = dataStore;
         this.dictionary = dictionary;
         this.operations = new ArrayList<>();
-        this.parent = null;
-    }
-
-    public InMemoryTransaction(ConcurrentHashMap<Class<?>, ConcurrentHashMap<String, Object>> dataStore,
-                               EntityDictionary dictionary, DataStoreTransaction parent) {
-        this.dataStore = dataStore;
-        this.dictionary = dictionary;
-        this.operations = new ArrayList<>();
-        this.parent = parent;
     }
 
     @Override
@@ -172,8 +162,7 @@ public class InMemoryTransaction implements DataStoreTransaction {
     public <T> Collection filterCollection(Collection collection, Class<T> entityClass, Set<Predicate> predicates) {
         Set<java.util.function.Predicate> filterFns = new InMemoryFilterOperation(dictionary).applyAll(predicates);
         return (Collection) collection.stream()
-                .filter(e -> filterFns.stream()
-                        .allMatch(fn -> fn.test(e)))
+                .filter(e -> filterFns.stream().allMatch(fn -> fn.test(e)))
                 .collect(Collectors.toList());
     }
 

@@ -6,7 +6,6 @@
 package com.yahoo.elide.datastores.hibernate3;
 
 import com.yahoo.elide.annotation.ReadPermission;
-import com.yahoo.elide.core.DataStoreTransaction;
 import com.yahoo.elide.core.EntityDictionary;
 import com.yahoo.elide.core.FilterScope;
 import com.yahoo.elide.core.RequestScope;
@@ -70,8 +69,6 @@ public class HibernateTransaction implements RequestScopedTransaction {
     @Getter(value = AccessLevel.PROTECTED)
     private RequestScope requestScope = null;
 
-    private final DataStoreTransaction parent;
-
     /**
      * Instantiates a new Hibernate transaction.
      *
@@ -83,21 +80,6 @@ public class HibernateTransaction implements RequestScopedTransaction {
         this.session = session;
         this.isScrollEnabled = true;
         this.scrollMode = ScrollMode.FORWARD_ONLY;
-        this.parent = null;
-    }
-
-    /**
-     * Instantiates a new Hibernate transaction.
-     *
-     * @param session the session
-     * @deprecated since 2.3.2. Will be removed no later than the release of Elide 3.0.
-     */
-    @Deprecated
-    public HibernateTransaction(Session session, DataStoreTransaction parent) {
-        this.session = session;
-        this.isScrollEnabled = true;
-        this.scrollMode = ScrollMode.FORWARD_ONLY;
-        this.parent = parent;
     }
 
     /**
@@ -111,22 +93,6 @@ public class HibernateTransaction implements RequestScopedTransaction {
         this.session = session;
         this.isScrollEnabled = isScrollEnabled;
         this.scrollMode = scrollMode;
-        this.parent = null;
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param session Hibernate session
-     * @param isScrollEnabled Whether or not scrolling is enabled
-     * @param scrollMode Scroll mode to use if scrolling enabled
-     */
-    protected HibernateTransaction(
-            Session session, boolean isScrollEnabled, ScrollMode scrollMode, DataStoreTransaction parent) {
-        this.session = session;
-        this.isScrollEnabled = isScrollEnabled;
-        this.scrollMode = scrollMode;
-        this.parent = parent;
     }
 
     @Override
@@ -446,10 +412,5 @@ public class HibernateTransaction implements RequestScopedTransaction {
     public Integer getQueryLimit() {
         // no limit
         return null;
-    }
-
-    @Override
-    public DataStoreTransaction getParent() {
-        return parent;
     }
 }
