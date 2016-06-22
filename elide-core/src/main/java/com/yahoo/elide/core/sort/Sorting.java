@@ -11,7 +11,6 @@ import lombok.ToString;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,11 +48,28 @@ public class Sorting {
     public <T> boolean hasValidSortingRules(final Class<T> entityClass,
                                         final EntityDictionary dictionary) throws InvalidValueException {
 
-        final List<String> entities = dictionary.getAttributes(entityClass);
         sortRules.keySet().stream().forEachOrdered(sortRule -> {
-            if (!entities.contains(sortRule)) {
-                throw new InvalidValueException(entityClass.getSimpleName()
-                        + " doesn't contain the field " + sortRule);
+
+            Class<?> precedingEntityClass = entityClass;
+
+            final String[] keyParts = sortRule.split("\\.");
+
+            for (int i = 0; i < keyParts.length; ++i) {
+                if (i == (keyParts.length - 1)) {
+                    // Last part of the key must be an attribute of the preceding entity in the path
+                        if (!dictionary.getAttributes(precedingEntityClass).contains(keyParts[i])) {
+                        throw new InvalidValueException(precedingEntityClass.getSimpleName()
+                                + " doesn't contain the field " + keyParts[i]);
+                    }
+                }
+                else {
+                    // Preceding parts in the key must be valid entities related to the target entity
+                    precedingEntityClass = dictionary.getParameterizedType(precedingEntityClass, keyParts[i]);
+                    if (precedingEntityClass == null) {
+                        throw new InvalidValueException(entityClass.getSimpleName()
+                                + " doesn't have relationship " + keyParts[i]);
+                    }
+                }
             }
         });
         return true;
