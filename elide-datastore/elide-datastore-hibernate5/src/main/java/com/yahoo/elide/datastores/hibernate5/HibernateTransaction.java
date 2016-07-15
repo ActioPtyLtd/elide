@@ -26,6 +26,7 @@ import org.hibernate.Session;
 import org.hibernate.collection.internal.AbstractPersistentCollection;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.resource.transaction.spi.TransactionStatus;
 
@@ -205,6 +206,20 @@ public class HibernateTransaction implements DataStoreTransaction {
             return new ScrollableIterator(sessionCriteria.scroll(scrollMode));
         }
         return sessionCriteria.list();
+    }
+
+    @Override
+    public <T> Long getTotalRecords(Class<T> entityClass, FilterScope filterScope) {
+        final Criterion criterion = filterScope.getCriterion(NOT, AND, OR);
+        final CriteriaExplorer criteriaExplorer = new CriteriaExplorer(
+                entityClass, filterScope.getRequestScope(), criterion);
+        final Criteria sessionCriteria = session.createCriteria(entityClass);
+
+        criteriaExplorer.buildCriteria(sessionCriteria, session);
+
+        sessionCriteria.setProjection(Projections.rowCount());
+
+        return (Long) sessionCriteria.uniqueResult();
     }
 
     @Override

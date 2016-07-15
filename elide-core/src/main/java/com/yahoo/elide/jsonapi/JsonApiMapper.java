@@ -28,8 +28,12 @@ public class JsonApiMapper {
      * @param dictionary the dictionary
      */
     public JsonApiMapper(EntityDictionary dictionary) {
-        mapper = new ObjectMapper();
-        mapper.registerModule(JsonApiSerializer.getModule(dictionary));
+        this(new ObjectMapper(), dictionary);
+    }
+
+    public JsonApiMapper (ObjectMapper mapper, EntityDictionary dictionary) {
+        this.mapper = mapper;
+        this.mapper.registerModule(JsonApiSerializer.getModule(dictionary));
     }
 
     /**

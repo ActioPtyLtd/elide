@@ -83,6 +83,7 @@
                                 <goal>reserve-network-port</goal>
                             </goals>
                             <configuration>
+								<skip>${skipITs}</skip>
                                 <portNames>
                                     <portName>mysql.port</portName>
                                 </portNames>
@@ -113,6 +114,7 @@
                                 <goal>unpack</goal>
                             </goals>
                             <configuration>
+								<skip>${skipITs}</skip>
                                 <artifactItems>
                                     <artifactItem>
                                         <groupId>com.jcabi</groupId>
@@ -141,6 +143,7 @@
                                 <goal>stop</goal>
                             </goals>
                             <configuration>
+								<skip>${skipITs}</skip>
                                 <port>${mysql.port}</port>
                                 <data>${mysql.data.directory}</data>
                             </configuration>
