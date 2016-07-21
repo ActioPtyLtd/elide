@@ -9,12 +9,15 @@ import com.yahoo.elide.core.exceptions.InvalidAttributeException;
 import com.yahoo.elide.core.exceptions.InvalidValueException;
 import com.yahoo.elide.utils.coerce.converters.FromMapConverter;
 import com.yahoo.elide.utils.coerce.converters.ToEnumConverter;
+import com.yahoo.elide.utils.coerce.converters.ToInstantConverter;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.ConversionException;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.ConvertUtilsBean;
 import org.apache.commons.beanutils.Converter;
+import org.apache.commons.lang3.ClassUtils;
 
+import java.time.Instant;
 import java.util.Map;
 
 /**
@@ -24,6 +27,7 @@ public class CoerceUtil {
 
     private static final ToEnumConverter TO_ENUM_CONVERTER = new ToEnumConverter();
     private static final FromMapConverter FROM_MAP_CONVERTER = new FromMapConverter();
+    private static final ToInstantConverter TO_INSTANT_CONVERTER = new ToInstantConverter();
 
     //static block for setup and registering new converters
     static {
@@ -60,12 +64,15 @@ public class CoerceUtil {
             /*
              * Overriding lookup to execute enum converter if target is enum
              * or map convert if source is map
+             * or convert to Java 8 Instant
              */
             public Converter lookup(Class<?> sourceType, Class<?> targetType) {
                 if (targetType.isEnum()) {
                     return TO_ENUM_CONVERTER;
                 } else if (Map.class.isAssignableFrom(sourceType)) {
                     return FROM_MAP_CONVERTER;
+                } else if (ClassUtils.isAssignable(Instant.class, targetType)) {
+                    return TO_INSTANT_CONVERTER;
                 } else {
                     return super.lookup(sourceType, targetType);
                 }
