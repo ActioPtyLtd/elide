@@ -12,6 +12,7 @@ import com.yahoo.elide.core.EntityDictionary;
 import com.yahoo.elide.core.filter.dialect.DefaultFilterDialect;
 import com.yahoo.elide.core.filter.dialect.MultipleFilterDialect;
 import com.yahoo.elide.core.filter.dialect.RSQLFilterDialect;
+import com.yahoo.elide.jsonapi.JsonApiMapper;
 import com.yahoo.elide.resources.JsonApiEndpoint;
 import org.glassfish.hk2.api.Factory;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -23,9 +24,15 @@ import java.util.HashMap;
  */
 public class StandardTestBinder extends AbstractBinder {
     private final AuditLogger auditLogger;
+    private final ObjectMapperCustomizer objectMapperCustomizer;
 
     public StandardTestBinder(final AuditLogger auditLogger) {
+        this(auditLogger, null);
+    }
+
+    public StandardTestBinder(final AuditLogger auditLogger, ObjectMapperCustomizer objectMapperCustomizer) {
         this.auditLogger = auditLogger;
+        this.objectMapperCustomizer = objectMapperCustomizer;
     }
 
     @Override
@@ -43,12 +50,18 @@ public class StandardTestBinder extends AbstractBinder {
                         Lists.newArrayList(rsqlFilterStrategy, defaultFilterStrategy)
                 );
 
+                JsonApiMapper jsonApiMapper = new JsonApiMapper(dictionary);
+                if (objectMapperCustomizer != null) {
+                    objectMapperCustomizer.customize(jsonApiMapper.getObjectMapper());
+                }
+
                 return new Elide.Builder(AbstractIntegrationTestInitializer.getDatabaseManager())
-                        .withAuditLogger(auditLogger)
-                        .withJoinFilterDialect(multipleFilterStrategy)
-                        .withSubqueryFilterDialect(multipleFilterStrategy)
-                        .withEntityDictionary(dictionary)
-                        .build();
+                    .withAuditLogger(auditLogger)
+                    .withJoinFilterDialect(multipleFilterStrategy)
+                    .withSubqueryFilterDialect(multipleFilterStrategy)
+                    .withEntityDictionary(dictionary)
+                    .withJsonApiMapper(jsonApiMapper)
+                    .build();
             }
 
             @Override

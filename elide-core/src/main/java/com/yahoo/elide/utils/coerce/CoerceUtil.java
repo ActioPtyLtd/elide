@@ -8,6 +8,7 @@ package com.yahoo.elide.utils.coerce;
 import com.yahoo.elide.core.exceptions.InvalidAttributeException;
 import com.yahoo.elide.core.exceptions.InvalidValueException;
 import com.yahoo.elide.utils.coerce.converters.EpochToDateConverter;
+import com.yahoo.elide.utils.coerce.converters.ToJava8TimeConverter;
 import com.yahoo.elide.utils.coerce.converters.FromMapConverter;
 import com.yahoo.elide.utils.coerce.converters.ToEnumConverter;
 import org.apache.commons.beanutils.BeanUtilsBean;
@@ -28,6 +29,7 @@ public class CoerceUtil {
     private static final ToEnumConverter TO_ENUM_CONVERTER = new ToEnumConverter();
     private static final FromMapConverter FROM_MAP_CONVERTER = new FromMapConverter();
     private static final EpochToDateConverter EPOCH_TO_DATE_CONVERTER = new EpochToDateConverter();
+    private static final ToJava8TimeConverter JAVA_8_TIME_CONVERTER = new ToJava8TimeConverter();
 
     //static block for setup and registering new converters
     static {
@@ -66,8 +68,8 @@ public class CoerceUtil {
 
             @Override
             /*
-             * Overriding lookup to execute enum converter if target is enum
-             * or map convert if source is map
+             * Overriding lookup to execute enum converter if target is enum, map or
+             * or map convert if source is map, Java 8 time converter if target is a Java 8 time type
              */
             public Converter lookup(Class<?> sourceType, Class<?> targetType) {
                 if (targetType.isEnum()) {
@@ -77,6 +79,8 @@ public class CoerceUtil {
                 } else if ((String.class.isAssignableFrom(sourceType) || Long.class.isAssignableFrom(sourceType))
                         && ClassUtils.isAssignable(targetType, Date.class)) {
                     return EPOCH_TO_DATE_CONVERTER;
+                } else if (JAVA_8_TIME_CONVERTER.canConvert(sourceType, targetType)) {
+                    return JAVA_8_TIME_CONVERTER;
                 } else {
                     return super.lookup(sourceType, targetType);
                 }
