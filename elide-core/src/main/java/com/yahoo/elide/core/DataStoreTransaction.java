@@ -137,7 +137,7 @@ public interface DataStoreTransaction extends Closeable {
      * @param entityClass the entity class
      * @return total matching entities
      */
-    default <T> Long getTotalRecords(Class<T> entityClass) {
+    default <T> Long getTotalRecords(Class<T> entityClass, FilterScope filterScope) {
         // default to no records
         return 0L;
     }

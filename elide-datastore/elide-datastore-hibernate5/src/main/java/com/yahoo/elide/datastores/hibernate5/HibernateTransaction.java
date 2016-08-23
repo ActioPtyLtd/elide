@@ -185,8 +185,7 @@ public class HibernateTransaction implements DataStoreTransaction {
         return loadObjects(loadClass, criteria, Optional.empty(), Optional.empty());
     }
 
-    @Override
-    public <T> Iterable<T> loadObjectsWithSortingAndPagination(Class<T> entityClass, FilterScope filterScope) {
+    public <T> Criteria configureCriteria(Class<T> entityClass, FilterScope filterScope) {
         Criterion securityCriterion = filterScope.getCriterion(NOT, AND, OR);
 
         Optional<FilterExpression> filterExpression =
@@ -201,6 +200,14 @@ public class HibernateTransaction implements DataStoreTransaction {
             CriterionFilterOperation filterOpn = new CriterionFilterOperation(criteria);
             criteria = filterOpn.apply(filterExpression.get());
         }
+
+        return criteria;
+    }
+
+    @Override
+    public <T> Iterable<T> loadObjectsWithSortingAndPagination(Class<T> entityClass, FilterScope filterScope) {
+
+        final Criteria criteria = configureCriteria(entityClass, filterScope);
 
         final Pagination pagination = filterScope.getRequestScope().getPagination();
 
@@ -287,10 +294,10 @@ public class HibernateTransaction implements DataStoreTransaction {
     }
 
     @Override
-    public <T> Long getTotalRecords(Class<T> entityClass) {
-        final Criteria sessionCriteria = session.createCriteria(entityClass);
-        sessionCriteria.setProjection(Projections.rowCount());
-        return (Long) sessionCriteria.uniqueResult();
+    public <T> Long getTotalRecords(Class<T> entityClass, FilterScope filterScope) {
+        final Criteria criteria = configureCriteria(entityClass, filterScope);
+        criteria.setProjection(Projections.rowCount());
+        return (Long) criteria.uniqueResult();
     }
 
     @Override
