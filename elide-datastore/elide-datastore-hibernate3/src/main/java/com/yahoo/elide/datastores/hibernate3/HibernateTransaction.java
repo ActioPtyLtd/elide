@@ -217,7 +217,7 @@ public class HibernateTransaction implements RequestScopedTransaction {
         return loadObjects(loadClass, criteria, Optional.empty());
     }
 
-    public <T> Criteria configureCriteria(Class<T> entityClass, Criteria criteria, FilterScope filterScope) {
+    public <T> Set<String> configureCriteria(Class<T> entityClass, Criteria criteria, FilterScope filterScope) {
         final Criterion securityCriterion = filterScope.getCriterion(NOT, AND, OR);
 
         Optional<FilterExpression> filterExpression =
@@ -233,7 +233,7 @@ public class HibernateTransaction implements RequestScopedTransaction {
             createdAliases = filterOpn.apply(filterExpression.get());
         }
 
-        return criteria;
+        return createdAliases;
     }
 
     @Override
@@ -241,7 +241,7 @@ public class HibernateTransaction implements RequestScopedTransaction {
 
         final Criteria criteria = session.createCriteria(entityClass);
 
-        configureCriteria(entityClass, criteria, filterScope);
+        Set<String> createdAliases = configureCriteria(entityClass, criteria, filterScope);
 
         final Pagination pagination = filterScope.getRequestScope().getPagination();
 
