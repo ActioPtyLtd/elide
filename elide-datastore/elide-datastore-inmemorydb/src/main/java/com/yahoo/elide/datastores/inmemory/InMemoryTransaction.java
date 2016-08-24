@@ -7,6 +7,7 @@ package com.yahoo.elide.datastores.inmemory;
 
 import com.yahoo.elide.core.DataStoreTransaction;
 import com.yahoo.elide.core.EntityDictionary;
+import com.yahoo.elide.core.FilterScope;
 import com.yahoo.elide.core.filter.InMemoryFilterOperation;
 import com.yahoo.elide.core.filter.Predicate;
 import com.yahoo.elide.core.pagination.Pagination;
@@ -184,7 +185,7 @@ public class InMemoryTransaction implements DataStoreTransaction {
     }
 
     @Override
-    public <T> Long getTotalRecords(Class<T> entityClass) {
+    public <T> Long getTotalRecords(Class<T> entityClass, FilterScope filterScope) {
         ConcurrentHashMap<String, Object> objs = dataStore.get(entityClass);
         return objs == null ? 0L : objs.size();
     }

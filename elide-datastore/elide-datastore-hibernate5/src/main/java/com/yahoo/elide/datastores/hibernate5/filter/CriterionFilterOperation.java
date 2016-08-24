@@ -100,11 +100,11 @@ public class CriterionFilterOperation implements FilterOperation<Criterion> {
             case NOT:
                 return Restrictions.not(Restrictions.in(alias, predicate.getValues()));
             case PREFIX:
-                return Restrictions.like(alias, predicate.getValues().get(0) + "%");
+                return Restrictions.ilike(alias, predicate.getValues().get(0) + "%");
             case POSTFIX:
-                return Restrictions.like(alias, "%" + predicate.getValues().get(0));
+                return Restrictions.ilike(alias, "%" + predicate.getValues().get(0));
             case INFIX:
-                return Restrictions.like(alias, "%" + predicate.getValues().get(0) + "%");
+                return Restrictions.ilike(alias, "%" + predicate.getValues().get(0) + "%");
             case ISNULL:
                 return Restrictions.isNull(alias);
             case NOTNULL:

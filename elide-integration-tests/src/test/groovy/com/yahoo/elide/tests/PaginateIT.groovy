@@ -592,6 +592,15 @@ public class PaginateIT extends AbstractIntegrationTestInitializer {
     }
 
     @Test
+    public void testPaginateFilterWithPageTotals() {
+        def result = mapper.readTree(RestAssured.get("/book?filter[book.genre]=Science Fiction&page[limit]=2&page[totals]").asString())
+        Assert.assertEquals(result.get("data").size(), 2)
+        JsonNode pageNode = result.get("meta").get("page")
+        Assert.assertNotNull(pageNode)
+        Assert.assertEquals(pageNode.get("totalRecords").asInt(), 3)
+    }
+
+    @Test
     public void testPaginateAnnotationDefaultLimit() {
         def result = mapper.readTree(RestAssured.get("/entityWithPaginateDefaultLimit?page[number]=1").asString())
         Assert.assertEquals(result.get("data").size(), 5)

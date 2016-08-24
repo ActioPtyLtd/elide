@@ -373,7 +373,7 @@ public class PersistentResource<T> implements com.yahoo.elide.security.Persisten
             return 0L;
         }
 
-        return tx.getTotalRecords(loadClass);
+        return tx.getTotalRecords(loadClass, new FilterScope(requestScope, loadClass));
     }
 
     /**

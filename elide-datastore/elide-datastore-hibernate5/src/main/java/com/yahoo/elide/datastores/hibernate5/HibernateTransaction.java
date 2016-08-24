@@ -188,14 +188,12 @@ public class HibernateTransaction implements DataStoreTransaction {
         return loadObjects(loadClass, criteria, Optional.empty());
     }
 
-    @Override
-    public <T> Iterable<T> loadObjectsWithSortingAndPagination(Class<T> entityClass, FilterScope filterScope) {
-        Criterion securityCriterion = filterScope.getCriterion(NOT, AND, OR);
+    public <T> Criteria configureCriteria(Class<T> entityClass, Criteria criteria, FilterScope filterScope) {
+        final Criterion securityCriterion = filterScope.getCriterion(NOT, AND, OR);
 
         Optional<FilterExpression> filterExpression =
                 filterScope.getRequestScope().getLoadFilterExpression(entityClass);
 
-        Criteria criteria = session.createCriteria(entityClass);
         if (securityCriterion != null) {
             criteria.add(securityCriterion);
         }
@@ -205,6 +203,16 @@ public class HibernateTransaction implements DataStoreTransaction {
             CriterionFilterOperation filterOpn = new CriterionFilterOperation(criteria);
             createdAliases = filterOpn.apply(filterExpression.get());
         }
+
+        return criteria;
+    }
+
+    @Override
+    public <T> Iterable<T> loadObjectsWithSortingAndPagination(Class<T> entityClass, FilterScope filterScope) {
+
+        final Criteria criteria = session.createCriteria(entityClass);
+
+        configureCriteria(entityClass, criteria, filterScope);
 
         final Pagination pagination = filterScope.getRequestScope().getPagination();
 
@@ -334,10 +342,11 @@ public class HibernateTransaction implements DataStoreTransaction {
     }
 
     @Override
-    public <T> Long getTotalRecords(Class<T> entityClass) {
-        final Criteria sessionCriteria = session.createCriteria(entityClass);
-        sessionCriteria.setProjection(Projections.rowCount());
-        return (Long) sessionCriteria.uniqueResult();
+    public <T> Long getTotalRecords(Class<T> entityClass, FilterScope filterScope) {
+        Criteria criteria = session.createCriteria(entityClass);
+        configureCriteria(entityClass, criteria, filterScope);
+        criteria.setProjection(Projections.rowCount());
+        return (Long) criteria.uniqueResult();
     }
 
     @Override
