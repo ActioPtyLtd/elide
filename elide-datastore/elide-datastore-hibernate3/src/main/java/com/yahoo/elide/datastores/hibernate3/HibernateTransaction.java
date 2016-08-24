@@ -215,14 +215,12 @@ public class HibernateTransaction implements RequestScopedTransaction {
         return loadObjects(loadClass, criteria, Optional.empty(), Optional.empty());
     }
 
-    public <T> Criteria configureCriteria(Class<T> entityClass, FilterScope filterScope) {
-
-        Criterion securityCriterion = filterScope.getCriterion(NOT, AND, OR);
+    public <T> Criteria configureCriteria(Class<T> entityClass, Criteria criteria, FilterScope filterScope) {
+        final Criterion securityCriterion = filterScope.getCriterion(NOT, AND, OR);
 
         Optional<FilterExpression> filterExpression =
                 filterScope.getRequestScope().getLoadFilterExpression(entityClass);
 
-        Criteria criteria = session.createCriteria(entityClass);
         if (securityCriterion != null) {
             criteria.add(securityCriterion);
         }
@@ -236,10 +234,11 @@ public class HibernateTransaction implements RequestScopedTransaction {
     }
 
     @Override
-    public <T> Iterable<T> loadObjectsWithSortingAndPagination(Class<T> entityClass,
-                                                               FilterScope filterScope) {
+    public <T> Iterable<T> loadObjectsWithSortingAndPagination(Class<T> entityClass, FilterScope filterScope) {
 
-        final Criteria criteria = configureCriteria(entityClass, filterScope);
+        final Criteria criteria = session.createCriteria(entityClass);
+
+        configureCriteria(entityClass, criteria, filterScope);
 
         final Pagination pagination = filterScope.getRequestScope().getPagination();
 
@@ -305,7 +304,8 @@ public class HibernateTransaction implements RequestScopedTransaction {
 
     @Override
     public <T> Long getTotalRecords(Class<T> entityClass, FilterScope filterScope) {
-        final Criteria criteria = configureCriteria(entityClass, filterScope);
+        Criteria criteria = session.createCriteria(entityClass);
+        configureCriteria(entityClass, criteria, filterScope);
         criteria.setProjection(Projections.rowCount());
         return (Long) criteria.uniqueResult();
     }
