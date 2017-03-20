@@ -12,6 +12,7 @@ import com.yahoo.elide.core.exceptions.TransactionException;
 
 import com.google.common.base.Preconditions;
 
+import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollMode;
 import org.hibernate.Session;
@@ -111,6 +112,11 @@ public class HibernateStore implements DataStore {
     @Override
     public DataStoreTransaction beginTransaction() {
         Session session = sessionFactory.getCurrentSession();
+
+        // Force flushmode to be COMMIT instead of the default AUTO. This is necessary to stop Hibernate from
+        // sometimes flushing pending incomplete inserts/updates while it is fetching foreign keys.
+        session.setFlushMode(FlushMode.COMMIT);
+
         Preconditions.checkNotNull(session);
         session.beginTransaction();
         return new HibernateTransaction(session, isScrollEnabled, scrollMode);
